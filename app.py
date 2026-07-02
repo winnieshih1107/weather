@@ -3,10 +3,12 @@ FastAPI app serving the CWA temperature dashboard's API.
 
 This is the single entrypoint used both for local development (`uvicorn
 app:app`) and for Vercel, which auto-detects a top-level `app` FastAPI
-instance and deploys it as one serverless function. Static frontend files
-live in public/ and are served directly by Vercel's CDN (see
-https://vercel.com/docs/frameworks/backend/fastapi#serving-static-assets) --
-this app only serves /api/*.
+instance and deploys it as one serverless function. Vercel's docs say
+public/** is served by its CDN automatically, without needing a mount --
+but in practice, once a project is detected as a backend framework (FastAPI
+via requirements.txt), every path including "/" was observed to hit this
+function and 404 instead of falling back to public/. So the frontend is
+served explicitly here instead of relying on that platform default.
 
 Vercel Functions are stateless and ephemeral between requests, so unlike a
 traditional always-on server, this fetches fresh from CWA on every request
@@ -17,13 +19,18 @@ at the cost of a bit of per-request latency for the CWA round trip.
 
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import cwa_forecast
 import fetch_weather
+
+BASE_DIR = Path(__file__).resolve().parent
+PUBLIC_DIR = BASE_DIR / "public"
 
 load_dotenv()  # no-op on Vercel: CWA_TOKEN / WINDY_API_KEY come from its env vars instead
 WINDY_API_KEY = os.environ.get("WINDY_API_KEY", "")
@@ -105,3 +112,7 @@ def get_config():
     # and never sent to the browser). Left blank until WINDY_API_KEY is
     # set, and the frontend falls back to a plain Leaflet/OSM map.
     return {"windyApiKey": WINDY_API_KEY}
+
+
+# Mounted last so it only catches paths not matched by the /api/* routes above.
+app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="frontend")
