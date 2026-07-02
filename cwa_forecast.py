@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
-CWA_TOKEN = os.environ["CWA_TOKEN"]
 
 FORECAST_URL = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091"
 
@@ -24,10 +23,14 @@ def fetch_raw_forecast() -> dict:
     # explanation). Unlike the fileapi flow, this REST endpoint returns data
     # directly from that same broken host rather than redirecting to S3, so
     # verification has to be skipped for the whole request, not just a hop.
+    #
+    # CWA_TOKEN is read lazily here (not at import time): a missing token
+    # should fail this one request, not crash the whole module -- and hence
+    # every route, including unrelated ones like /api/config -- on import.
     ctx = ssl._create_unverified_context()
     req = urllib.request.Request(
         FORECAST_URL,
-        headers={"User-Agent": "Mozilla/5.0", "Authorization": CWA_TOKEN},
+        headers={"User-Agent": "Mozilla/5.0", "Authorization": os.environ["CWA_TOKEN"]},
     )
     with urllib.request.urlopen(req, timeout=30, context=ctx) as resp:
         return json.loads(resp.read())

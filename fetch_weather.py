@@ -23,7 +23,6 @@ CSV_PATH = BASE_DIR / "weather.csv"
 DB_PATH = BASE_DIR / "weather.db"
 
 load_dotenv(BASE_DIR / ".env")
-CWA_TOKEN = os.environ["CWA_TOKEN"]
 
 API_URL = (
     "https://opendata.cwa.gov.tw/fileapi/v1/opendataapi/O-A0001-001"
@@ -156,7 +155,10 @@ def fetch_stations() -> list[dict]:
     Used by the web API (app.py), which runs on Vercel's read-only,
     ephemeral filesystem and needs fresh data on every request anyway.
     """
-    payload = fetch_data(API_URL, CWA_TOKEN)
+    # Read lazily (not at import time): a missing CWA_TOKEN should fail the
+    # one request that needs it, not crash the whole module -- and hence
+    # every route, including unrelated ones like /api/config -- on import.
+    payload = fetch_data(API_URL, os.environ["CWA_TOKEN"])
     return extract_records(payload)
 
 
