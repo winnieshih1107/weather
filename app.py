@@ -114,5 +114,14 @@ def get_config():
     return {"windyApiKey": WINDY_API_KEY}
 
 
-# Mounted last so it only catches paths not matched by the /api/* routes above.
-app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="frontend")
+# Mounted last so it only catches paths not matched by the /api/* routes
+# above. Guarded by exists() because StaticFiles() raises at construction
+# time (i.e. at module import, crashing every route) if the directory isn't
+# present in the function's bundle -- better to serve /api/* with a broken
+# frontend than crash the whole app if that ever happens again.
+if PUBLIC_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="frontend")
+else:
+    @app.get("/")
+    def missing_public_dir():
+        return {"error": f"public/ directory not found at {PUBLIC_DIR} in this deployment"}
