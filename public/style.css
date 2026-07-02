@@ -1,0 +1,298 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#windy {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.floating-panel {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  padding: 10px 14px;
+  font-family: "Inter", "Roboto", "Segoe UI", "Microsoft JhengHei", sans-serif;
+  font-size: 13px;
+  color: #222;
+}
+
+#stats-panel {
+  top: 16px;
+  left: 16px;
+  min-width: 200px;
+}
+
+.stats-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+#controls-panel {
+  bottom: 16px;
+  right: 16px;
+}
+
+#legend-panel {
+  bottom: 16px;
+  left: 16px;
+}
+
+#tips-panel {
+  top: 16px;
+  right: 16px;
+}
+
+#forecast-panel {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 320px;
+  max-width: min(92vw, 720px);
+}
+
+.forecast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.forecast-close-btn {
+  border: none;
+  background: none;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+  padding: 0 2px;
+}
+
+.metric-switch {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.metric-btn {
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 4px 7px;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.metric-btn.active {
+  background: #2b6cb0;
+  border-color: #2b6cb0;
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.forecast-days {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.forecast-day-card {
+  flex: 0 0 auto;
+  min-width: 76px;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.forecast-day-date {
+  font-size: 11px;
+  color: #666;
+}
+
+.forecast-day-emoji {
+  font-size: 20px;
+  margin: 2px 0;
+}
+
+.forecast-day-temp {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.forecast-day-temp .hi {
+  color: #e63946;
+}
+
+.forecast-day-temp .lo {
+  color: #4a90d9;
+}
+
+.forecast-day-pop {
+  font-size: 10px;
+  color: #2b6cb0;
+  margin-top: 2px;
+}
+
+.legend-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
+.controls-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.controls-title:not(:first-child) {
+  margin-top: 10px;
+}
+
+.view-mode-switch {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.view-mode-btn {
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #333;
+}
+
+.view-mode-btn.active {
+  background: #2b6cb0;
+  border-color: #2b6cb0;
+  color: #fff;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0;
+  white-space: nowrap;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+#tips-panel div {
+  margin: 2px 0;
+}
+
+#controls-panel label {
+  display: block;
+  white-space: nowrap;
+  margin: 4px 0;
+}
+
+.layer-toggle-windy-only input:disabled {
+  cursor: not-allowed;
+}
+
+.layer-toggle-windy-only:has(input:disabled) {
+  color: #999;
+}
+
+.windy-disabled-banner {
+  bottom: 16px;
+  left: 16px;
+  max-width: 320px;
+  color: #7a4b00;
+  background: rgba(255, 244, 219, 0.95);
+}
+
+/* Flat station label: no background box, just a colour-coded number with a
+   dark text-shadow for contrast against any basemap/overlay (策略三). */
+.cwa-temp-flat {
+  font-family: "Inter", "Roboto", "Segoe UI", "Microsoft JhengHei", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75), 0 0 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+/* Marker cluster bubble: average temperature + station count (策略一) */
+.cwa-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(30, 30, 30, 0.78);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  color: inherit;
+  font-family: "Inter", "Roboto", "Segoe UI", "Microsoft JhengHei", sans-serif;
+}
+
+.cwa-cluster-temp {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cwa-cluster-count {
+  font-size: 9px;
+  font-weight: 400;
+  color: #ddd;
+  line-height: 1.1;
+}
+
+/* Tooltip (優化設計方案 3.2): dark translucent glass panel */
+.leaflet-tooltip.cwa-tooltip-wrapper {
+  background: rgba(30, 30, 30, 0.85);
+  backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-family: "Inter", "Roboto", "Segoe UI", "Microsoft JhengHei", sans-serif;
+  font-size: 12px;
+  padding: 8px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.leaflet-tooltip.cwa-tooltip-wrapper.leaflet-tooltip-top:before {
+  border-top-color: rgba(30, 30, 30, 0.85);
+}
+
+.cwa-tooltip-title {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+/* County choropleth label: centered name + max temp + emoji, no background
+   box (matches the flat-label treatment used for individual stations). */
+.cwa-choropleth-label {
+  font-family: "Inter", "Roboto", "Segoe UI", "Microsoft JhengHei", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 0 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}

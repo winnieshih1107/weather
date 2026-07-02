@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CWA Temperature Map</title>
+  <!-- Windy's Map Forecast SDK requires Leaflet 1.4.x specifically; a newer
+       Leaflet makes libBoot.js throw and never define window.windyInit. -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Windy's SDK mounts its own Leaflet map into #windy; the plain-Leaflet
+       fallback (no/rejected Windy key) reuses the same container. -->
+  <div id="windy"></div>
+
+  <div id="stats-panel" class="floating-panel">
+    <div class="stats-title" id="stats-title">即時極端氣溫</div>
+    <div id="stats-content">載入中...</div>
+  </div>
+
+  <div id="controls-panel" class="floating-panel">
+    <div class="controls-title">資訊類別</div>
+    <div class="metric-switch" id="metric-switch">
+      <button type="button" class="metric-btn active" data-metric="temperature" title="氣溫">🌡️</button>
+      <button type="button" class="metric-btn" data-metric="humidity" title="濕度">💧</button>
+      <button type="button" class="metric-btn" data-metric="windSpeed" title="風速">💨</button>
+      <button type="button" class="metric-btn" data-metric="precipitation" title="降雨量">🌧️</button>
+      <button type="button" class="metric-btn" data-metric="pressure" title="氣壓">📊</button>
+    </div>
+
+    <div class="controls-title">檢視模式</div>
+    <div class="view-mode-switch">
+      <button type="button" id="mode-stations" class="view-mode-btn">測站點位</button>
+      <button type="button" id="mode-choropleth" class="view-mode-btn active">縣市色塊</button>
+    </div>
+
+    <div class="controls-title">圖層控制</div>
+    <label><input type="checkbox" id="toggle-stations" checked /> 即時氣溫點位</label>
+    <label class="layer-toggle-windy-only" title="需啟用 Windy 圖層才能使用">
+      <input type="checkbox" id="toggle-wind" disabled /> 風場流線圖
+    </label>
+    <label class="layer-toggle-windy-only" title="需啟用 Windy 圖層才能使用">
+      <input type="checkbox" id="toggle-rain" disabled /> 降雨量/雷達回波
+    </label>
+  </div>
+
+  <div id="forecast-panel" class="floating-panel" hidden>
+    <div class="forecast-header">
+      <div class="controls-title" id="forecast-title">未來一週預報</div>
+      <button type="button" id="forecast-close" class="forecast-close-btn">&times;</button>
+    </div>
+    <div id="forecast-content"></div>
+  </div>
+
+  <div id="legend-panel" class="floating-panel">
+    <div class="controls-title" id="legend-title">氣溫圖例（縣市內最高溫）</div>
+    <div id="legend-rows"></div>
+    <div class="legend-hint">點擊縣市查看未來一週預報</div>
+  </div>
+
+  <div id="tips-panel" class="floating-panel">
+    <div class="controls-title">溫馨提示</div>
+    <div>正午時段減少戶外活動</div>
+    <div>多補充水分，注意防曬</div>
+    <div>留意長者與幼童防中暑</div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
+  <script src="https://api.windy.com/assets/map-forecast/libBoot.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

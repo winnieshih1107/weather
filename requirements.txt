@@ -1,0 +1,4 @@
+certifi
+python-dotenv
+fastapi
+uvicorn[standard]
